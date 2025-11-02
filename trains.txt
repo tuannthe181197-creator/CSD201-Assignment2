@@ -1,0 +1,7 @@
+# tcode|train_name|seat|booked|depart_time|depart_place
+T01|Bangkok Express|120|40|7.30|Bangkok
+T02|Saigon Night|150|90|21.15|Saigon
+T03|Hanoi Rapid|100|75|13.00|Hanoi
+T04|DaNang Coastal|80|10|8.45|DaNang
+T05|Hue Scenic|60|5|10.20|Hue
+T06|NhaTrang Sun|90|20|16.50|NhaTrang
