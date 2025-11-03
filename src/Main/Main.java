@@ -122,7 +122,9 @@ public class Main {
             System.out.println("4. Save to file customer.txt");
             System.out.println("5. Search by ccode");
             System.out.println("6. Delete by ccode");
-            System.out.println("7. Back to main");
+            System.out.println("7. Sort Customer by ccode");
+            System.out.println("8. Update Info Customer");
+            System.out.println("9. Back to main");
             System.out.print("Your choice: ");
             c = getInt();
 
@@ -147,6 +149,7 @@ public class Main {
                     System.out.print("Enter ccode: ");
                     customers.deleteByCcode(sc.nextLine());
                     break;
+                    
             }
 
         } while (c != 7);

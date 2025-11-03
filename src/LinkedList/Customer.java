@@ -4,9 +4,21 @@
  */
 package LinkedList;
 
-/**
+/*
+ * ================================================================
+ *  CLASS INFORMATION
+ *  ================================================================
+ *  Class name: Customer
+ *  Author: Hoàng Thị Mỹ Duyên - HE187421
+ *  Subject: CSD201 - Data Structures and Algorithms
+ *  Project: Train Booking System (Assignment 1)
+ *  ---------------------------------------------------------------
+ *  Purpose:
+ *      - Biểu diễn đối tượng "Customer" (Khách hàng) trong hệ thống Train Booking System.
+ *      - Mỗi khách hàng gồm các thông tin cơ bản: mã khách hàng, tên, và số điện thoại.
+ *      - Đây là lớp mô hình (model class), được dùng trong cấu trúc Linked List để
+ *        quản lý danh sách khách hàng (CustomerList).
  *
- * @author Duyenhtmhe187421
  */
 
 public class Customer {

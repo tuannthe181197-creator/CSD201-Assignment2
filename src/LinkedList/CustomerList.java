@@ -1,9 +1,75 @@
 package LinkedList;
 
 /*
+ * ================================================================
+ *  CLASS INFORMATION
+ *  ================================================================
+ *  Class name: CustomerList
+ *  Author: Hoàng Thị Mỹ Duyên - HE187421
+ *  Subject: CSD201 - Data Structures and Algorithms
+ *  Project: Train Booking System (Assignment 1)
+ *  ---------------------------------------------------------------
+ *  Purpose:
+ *      - Quản lý danh sách khách hàng (Customer Management)
+ *      - Cấu trúc dữ liệu được sử dụng: Linked List (danh sách liên kết đơn)
+ *      - Mỗi node chứa thông tin của 1 khách hàng (Customer)
+ *      - Cho phép thực hiện các thao tác thêm, tìm kiếm, xóa, sắp xếp, hiển thị,
+ *        lưu và tải dữ liệu khách hàng từ file.
  *
- * @author Duyenhtmhe187421
+ *  ---------------------------------------------------------------
+ *  Major Functionalities:
+ *
+ *  1. loadFromFile(String fname) 
+ *      - Đọc dữ liệu khách hàng từ file văn bản (ví dụ: customer.txt)
+ *      - Phân tách dữ liệu theo ký tự '|'
+ *      - Thêm các khách hàng vào danh sách liên kết
+ *      - Dùng khi khởi động chương trình để nạp dữ liệu cũ
+ *
+ *  2. saveToFile(String fname) 
+ *      - Lưu toàn bộ danh sách khách hàng hiện tại xuống file
+ *      - Mỗi khách hàng ghi trên một dòng theo định dạng chuẩn
+ *      - Dùng khi thêm/xóa/cập nhật để đồng bộ dữ liệu
+ *
+ *  3. searchByCcode(String code) 
+ *      - Cho phép tìm kiếm khách hàng theo mã (ccode) hoặc số điện thoại
+ *      - Người dùng chọn cách tìm (menu nhỏ)
+ *      - Hiển thị kết quả chi tiết của khách hàng nếu có
+ *
+ *  4. deleteByCcode(String code) 
+ *      - Xóa khách hàng theo mã (ccode)
+ *      - Có xác nhận và cho phép nhập lại nếu sai hoặc không tìm thấy
+ *      - Tự động cập nhật head/tail nếu cần
+ *
+ *  5. display() 
+ *      - Hiển thị danh sách khách hàng hiện tại ra màn hình
+ *      - Dạng bảng có cột: Code | Name | Phone
+ *      - Dùng trong menu “Display data”
+ *
+ *  6. addCustomer() 
+ *      - Thêm khách hàng mới vào danh sách
+ *      - Có kiểm tra trùng mã (ccode) và số điện thoại
+ *      - Bắt lỗi người dùng (trống, không hợp lệ, trùng)
+ *      - Sau khi thêm, tự động lưu lại file
+ *
+ *  7. isEmpty() 
+ *      - Kiểm tra danh sách có rỗng hay không
+ *      - Hỗ trợ các thao tác khác (ví dụ khi xóa hoặc hiển thị)
+ *
+ *  8. sortCustomer() 
+ *      - Sắp xếp danh sách khách hàng theo mã (ccode) tăng dần
+ *      - Thuật toán sử dụng: Bubble Sort cho Linked List
+ *      - Dùng trong chức năng “Sort Customer List”
+ *
+ *  9. findByCcode(String code) 
+ *      - Tìm nhanh khách hàng theo mã (ccode)
+ *      - Trả về đối tượng Customer nếu tồn tại
+ *
+ *  10. updateCustomer() 
+ *      - Cập nhật thông tin khách hàng hiện có
+ *      - Cho phép giữ nguyên giá trị cũ nếu người dùng không nhập mới
+ *      - Sau khi cập nhật, tự động ghi lại file
  */
+
 
 import java.io.*;
 import java.util.Scanner;
@@ -343,6 +409,8 @@ public class CustomerList extends MyLinkedList<Customer> {
         System.out.println(" Customer list sorted by code successfully!");
     }
 
+   
+// ================== 9. TÌM KHÁCH HÀNG THEO MÃ ==================
     public Customer findByCcode(String code) {
         Node<Customer> p = head;
         while (p != null) {
@@ -356,4 +424,25 @@ public class CustomerList extends MyLinkedList<Customer> {
         return null;
     }
 
+    // ================== 10. CẬP NHẬT THÔNG TIN KHÁCH HÀNG ==================
+    public void updateCustomer() {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Enter customer code to update: ");
+        String code = sc.nextLine().trim();
+
+        Customer c = findByCcode(code);
+        if (c == null) return; // Không tồn tại khách hàng
+
+        // Nhập lại thông tin mới (có thể bỏ trống để giữ nguyên)
+        System.out.print("Enter new name (leave blank to keep): ");
+        String newName = sc.nextLine().trim();
+        if (!newName.isEmpty()) c.cusName = newName;
+
+        System.out.print("Enter new phone (leave blank to keep): ");
+        String newPhone = sc.nextLine().trim();
+        if (!newPhone.isEmpty() && newPhone.matches("\\d+")) c.phone = newPhone;
+
+        saveToFile("customer.txt");
+        System.out.println("✅ Customer updated successfully!");
+    }
 }
