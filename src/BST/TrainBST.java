@@ -1,14 +1,7 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package BST;
 
-/**
- *
- * @author ADMIN
- */
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 public class TrainBST {
@@ -18,9 +11,10 @@ public class TrainBST {
 
     public boolean isEmpty(){ return root == null; }
 
-    // Insert by tcode (unique). Return false if duplicate.
+    /** Insert theo tcode (duy nhất). Trả về false nếu trùng hoặc input null/invalid. */
     public boolean insert(Train x){
         if (x == null) return false;
+        x.validate(); // đảm bảo hợp lệ trước khi chèn (ném IllegalArgumentException nếu sai)
         if (root == null){ root = new TrainNode(x); return true; }
         TrainNode f = null, p = root;
         String key = x.getTcode();
@@ -36,11 +30,13 @@ public class TrainBST {
         return true;
     }
 
-    // Search by tcode
+    /** Search theo tcode (null/blank → trả null) */
     public TrainNode search(String tcode){
+        if (tcode == null || tcode.trim().isEmpty()) return null;
+        String k = tcode.trim();
         TrainNode p = root;
         while(p != null){
-            int cmp = tcode.compareToIgnoreCase(p.info.getTcode());
+            int cmp = k.compareToIgnoreCase(p.info.getTcode());
             if (cmp == 0) return p;
             p = (cmp < 0) ? p.left : p.right;
         }
@@ -67,7 +63,7 @@ public class TrainBST {
         return 1 + count(p.left) + count(p.right);
     }
 
-    // Breadth-first traverse (using our queue)
+    // Breadth-first traverse
     public void breadthFirst(){
         System.out.println("tcode  | train_name        |  seat | booked |  dtime | depart_place");
         System.out.println("-------+--------------------+-------+--------+--------+--------------");
@@ -82,27 +78,28 @@ public class TrainBST {
         }
     }
 
-    // Delete by tcode using copying
+    /** Delete theo tcode (copying). Trả false nếu không tìm thấy/invalid key. */
     public boolean deleteByTcode(String tcode){
+        if (tcode == null || tcode.trim().isEmpty()) return false;
+        String key = tcode.trim();
+
         TrainNode p = root, f = null;
         while (p != null){
-            int cmp = tcode.compareToIgnoreCase(p.info.getTcode());
+            int cmp = key.compareToIgnoreCase(p.info.getTcode());
             if (cmp == 0) break;
             f = p;
             p = (cmp < 0) ? p.left : p.right;
         }
         if (p == null) return false; // not found
 
-        // case: two children
+        // case: two children → tìm successor bên phải và copy info
         if (p.left != null && p.right != null){
-            // find min on right (successor)
             TrainNode q = p.right; TrainNode fq = p;
             while (q.left != null){ fq = q; q = q.left; }
             p.info = q.info; // copy info
-            // Now delete q
-            p = q; f = fq;
+            p = q; f = fq;   // xóa q ở dưới
         }
-        // now p has at most one child
+        // p còn tối đa 1 con
         TrainNode child = (p.left != null) ? p.left : p.right;
         if (f == null) root = child;
         else if (f.left == p) f.left = child;
@@ -110,7 +107,7 @@ public class TrainBST {
         return true;
     }
 
-    // Balance (simple): convert to array (in-order), rebuild
+    /** Cân bằng đơn giản: đưa về mảng đã sort theo in-order rồi build lại */
     public void balance(){
         int n = count();
         if (n <= 1) return;
@@ -138,36 +135,77 @@ public class TrainBST {
         return node;
     }
 
-    // Load data from file (append to current tree)
+    /** Load từ file: báo cáo chi tiết số dòng thêm/trùng/lỗi định dạng */
     public int loadFromFile(String file) {
-        int added = 0, skipped = 0;
-        try (Scanner sc = new Scanner(new File(file), "UTF-8")) {
+        if (file == null || file.trim().isEmpty()) {
+            System.err.println("File path is empty.");
+            return 0;
+        }
+        File f = new File(file);
+        if (!f.exists() || !f.isFile()) {
+            System.err.println("File not found: " + file);
+            return 0;
+        }
+
+        int added = 0, skippedDup = 0, skippedInvalid = 0, lineNo = 0;
+        try (Scanner sc = new Scanner(f, StandardCharsets.UTF_8.name())) {
             while (sc.hasNextLine()) {
-                String line = sc.nextLine().trim();
-                if (line.isEmpty() || line.startsWith("#")) continue;
+                String line = sc.nextLine();
+                lineNo++;
+                String raw = (line == null ? "" : line.trim());
+                if (raw.isEmpty() || raw.startsWith("#")) continue;
                 try {
-                    Train t = Train.parse(line);
-                    if (insert(t)) added++; else skipped++;
+                    Train t = Train.parse(raw);
+                    boolean ok = insert(t);
+                    if (ok) added++; else skippedDup++;
+                } catch (IllegalArgumentException ex) {
+                    skippedInvalid++;
+                    System.err.printf("Line %d invalid: %s%n", lineNo, ex.getMessage());
                 } catch (Exception ex) {
-                    skipped++;
+                    skippedInvalid++;
+                    System.err.printf("Line %d error: %s%n", lineNo, ex.toString());
                 }
             }
-        } catch (IOException e) {
-            System.err.println("Cannot read file: " + e.getMessage());
+        } catch (FileNotFoundException e) {
+            System.err.println("Cannot open file: " + e.getMessage());
+            return 0;
+        } catch (SecurityException e) {
+            System.err.println("No permission to read file: " + e.getMessage());
+            return 0;
         }
-        System.out.printf("Loaded: %d, Skipped: %d%n", added, skipped);
+        System.out.printf("Loaded: %d, Duplicates: %d, Invalid: %d%n", added, skippedDup, skippedInvalid);
         return added;
     }
 
-    // Save in-order to file
+    /** Lưu in-order ra file, tự tạo thư mục cha nếu chưa tồn tại */
     public void saveInorderToFile(String file){
-        try (PrintWriter pw = new PrintWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8"))) {
+        if (file == null || file.trim().isEmpty()) {
+            System.err.println("Output path is empty.");
+            return;
+        }
+        File out = new File(file.trim());
+        File parent = out.getParentFile();
+        try {
+            if (parent != null && !parent.exists() && !parent.mkdirs()) {
+                System.err.println("Cannot create directory: " + parent.getAbsolutePath());
+            }
+        } catch (SecurityException se) {
+            System.err.println("No permission to create directory: " + se.getMessage());
+        }
+
+        try (PrintWriter pw = new PrintWriter(
+                new OutputStreamWriter(new FileOutputStream(out), StandardCharsets.UTF_8))) {
             saveInorder(root, pw);
-            System.out.println("Written in-order list to: " + file);
+            System.out.println("Written in-order list to: " + out.getPath());
+        } catch (FileNotFoundException e) {
+            System.err.println("Cannot open output file: " + e.getMessage());
+        } catch (SecurityException e) {
+            System.err.println("No permission to write file: " + e.getMessage());
         } catch (IOException e) {
-            System.err.println("Cannot write file: " + e.getMessage());
+            System.err.println("IO error while writing: " + e.getMessage());
         }
     }
+
     private void saveInorder(TrainNode p, PrintWriter pw){
         if (p == null) return;
         saveInorder(p.left, pw);
