@@ -50,7 +50,7 @@ public class Main {
         int c;
         do {
             System.out.println("\n--- TRAIN MENU ---");
-            System.out.println("1. Load data from file train.txt");
+            System.out.println("1. Load data from file trains.txt");
             System.out.println("2. Input & insert data");
             System.out.println("3. In-order traverse");
             System.out.println("4. Breadth-first traverse");
@@ -64,22 +64,16 @@ public class Main {
             c = getInt();
 
             switch (c) {
-                case 1: {
-                    System.out.print("Enter path (default: trains.txt): ");
-                    String path = sc.nextLine().trim();
-                    if (path.isEmpty()) {
-                        path = "trains.txt";
-                    }
-                    try {
-                        int added = trains.loadFromFile(path);
-                        System.out.println("Loaded from '" + path + "'. Added: " + added);
-                    } catch (Exception e) {
-                        System.out.println("Load failed: " + e.getMessage());
-                    }
-                    break;
+                case 1:
+                try {
+                    int added = trains.loadFromFile("trains.txt");
+                    System.out.println("Loaded from 'trains.txt'. Added: " + added);
+                } catch (Exception e) {
+                    System.out.println("Load failed: " + e.getMessage());
                 }
+                break;
+
                 case 2: {
-                    // NHẬP LẠI TCODE NẾU TRÙNG
                     String tc = getUniqueTcode(trains, "tcode: ");
                     String name = getNonEmpty("name: ");
                     int seat = getIntWithMin("seat (>0): ", 1);
@@ -90,8 +84,6 @@ public class Main {
                     try {
                         boolean ok = trains.insert(new Train(tc, name, seat, booked, time, place));
                         System.out.println(ok ? "Inserted." : "Duplicate tcode. Not inserted.");
-                    } catch (IllegalArgumentException iae) {
-                        System.out.println("Invalid input: " + iae.getMessage());
                     } catch (Exception e) {
                         System.out.println("Insert failed: " + e.getMessage());
                     }
@@ -104,10 +96,10 @@ public class Main {
                     trains.breadthFirst();
                     break;
                 case 5: {
-                    System.out.print("Output path (default: train.txt): ");
+                    System.out.print("Output path (default: trains.txt): ");
                     String out = sc.nextLine().trim();
                     if (out.isEmpty()) {
-                        out = "train.txt";
+                        out = "trains.txt";      // <==== fixed
                     }
                     try {
                         trains.saveInorderToFile(out);
@@ -119,43 +111,24 @@ public class Main {
                 }
                 case 6: {
                     System.out.print("Enter tcode: ");
-                    String key = sc.nextLine().trim();
-                    try {
-                        Object found = trains.search(key);
-                        if (found == null) {
-                            System.out.println("Not found.");
-                        } else {
-                            System.out.println("Found: " + found);
-                        }
-                    } catch (Exception e) {
-                        System.out.println("Search failed: " + e.getMessage());
-                    }
+                    trains.search(sc.nextLine().trim());
                     break;
                 }
                 case 7: {
                     System.out.print("Enter tcode: ");
                     String key = sc.nextLine().trim();
-                    try {
-                        boolean ok = trains.deleteByTcode(key);
-                        System.out.println(ok ? "Deleted." : "Not found.");
-                    } catch (Exception e) {
-                        System.out.println("Delete failed: " + e.getMessage());
-                    }
+                    boolean ok = trains.deleteByTcode(key);
+                    System.out.println(ok ? "Deleted." : "Not found.");
                     break;
                 }
                 case 8:
-                    try {
                     trains.balance();
                     System.out.println("Balanced.");
-                } catch (Exception e) {
-                    System.out.println("Balance failed: " + e.getMessage());
-                }
-                break;
+                    break;
                 case 9:
                     System.out.println("Total: " + trains.count());
                     break;
                 case 10:
-                    // back
                     break;
                 default:
                     System.out.println("Invalid choice!");
