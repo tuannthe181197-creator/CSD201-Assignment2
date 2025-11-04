@@ -19,9 +19,9 @@ public class Main {
         int choice;
         do {
             System.out.println("\n===== TRAIN BOOKING SYSTEM =====");
-            System.out.println("1. Train Module");
-            System.out.println("2. Customer Module");
-            System.out.println("3. Booking Module");
+            System.out.println("1. Train System");
+            System.out.println("2. Customer System");
+            System.out.println("3. Booking System");
             System.out.println("4. Exit");
             System.out.print("Enter your choice: ");
             choice = getInt();
@@ -67,7 +67,9 @@ public class Main {
                 case 1: {
                     System.out.print("Enter path (default: trains.txt): ");
                     String path = sc.nextLine().trim();
-                    if (path.isEmpty()) path = "trains.txt";
+                    if (path.isEmpty()) {
+                        path = "trains.txt";
+                    }
                     try {
                         int added = trains.loadFromFile(path);
                         System.out.println("Loaded from '" + path + "'. Added: " + added);
@@ -104,7 +106,9 @@ public class Main {
                 case 5: {
                     System.out.print("Output path (default: train.txt): ");
                     String out = sc.nextLine().trim();
-                    if (out.isEmpty()) out = "train.txt";
+                    if (out.isEmpty()) {
+                        out = "train.txt";
+                    }
                     try {
                         trains.saveInorderToFile(out);
                         System.out.println("Saved to '" + out + "'.");
@@ -141,12 +145,12 @@ public class Main {
                 }
                 case 8:
                     try {
-                        trains.balance();
-                        System.out.println("Balanced.");
-                    } catch (Exception e) {
-                        System.out.println("Balance failed: " + e.getMessage());
-                    }
-                    break;
+                    trains.balance();
+                    System.out.println("Balanced.");
+                } catch (Exception e) {
+                    System.out.println("Balance failed: " + e.getMessage());
+                }
+                break;
                 case 9:
                     System.out.println("Total: " + trains.count());
                     break;
@@ -160,21 +164,20 @@ public class Main {
         } while (c != 10);
     }
 
-
-    //================ CUSTOMER MODULE ================
+    // ========== CUSTOMER MODULE ==========
     private static void customerMenu(CustomerList customers) {
         int c;
         do {
             System.out.println("\n--- CUSTOMER MENU ---");
-            System.out.println("1. Load from file customer.txt");
-            System.out.println("2. Input & add to end");
-            System.out.println("3. Display");
-            System.out.println("4. Save to file customer.txt");
-            System.out.println("5. Search by ccode");
-            System.out.println("6. Delete by ccode");
-            System.out.println("7. Sort Customer by ccode");
-            System.out.println("8. Update Info Customer");
-            System.out.println("9. Back to main");
+            System.out.println("1. Load from customer.txt");
+            System.out.println("2. Add new customer");
+            System.out.println("3. Display customers");
+            System.out.println("4. Save to customer.txt");
+            System.out.println("5. Search customer by ccode");
+            System.out.println("6. Delete customer by ccode");
+            System.out.println("7. Sort customers by ccode");
+            System.out.println("8. Update customer information");
+            System.out.println("9. Back to Main Menu");
             System.out.print("Your choice: ");
             c = getInt();
 
@@ -186,7 +189,7 @@ public class Main {
                     customers.addCustomer();
                     break;
                 case 3:
-                    customers.traverse();
+                    customers.display();
                     break;
                 case 4:
                     customers.saveToFile("customer.txt");
@@ -199,10 +202,20 @@ public class Main {
                     System.out.print("Enter ccode: ");
                     customers.deleteByCcode(sc.nextLine());
                     break;
-                    
+                case 7:
+                    customers.sortCustomer();
+                    break;
+                case 8:
+                    customers.updateCustomer();
+                    break;
+                case 9:
+                    System.out.println("Return to Main Menu...");
+                    break;
+                default:
+                    System.out.println("Invalid!");
             }
 
-        } while (c != 7);
+        } while (c != 9);
     }
 
     //================ BOOKING MODULE ================
@@ -242,11 +255,14 @@ public class Main {
             }
         }
     }
+
     private static int getIntWithMin(String msg, int min) {
         while (true) {
             System.out.print(msg);
             int v = getInt();
-            if (v >= min) return v;
+            if (v >= min) {
+                return v;
+            }
             System.out.println("Value must be >= " + min);
         }
     }
@@ -257,7 +273,9 @@ public class Main {
             int v = getInt();
             if (v < min || v > max) {
                 System.out.println("Value must be between " + min + " and " + max);
-            } else return v;
+            } else {
+                return v;
+            }
         }
     }
 
@@ -276,7 +294,9 @@ public class Main {
         while (true) {
             System.out.print(msg);
             double v = getDouble();
-            if (v >= min) return v;
+            if (v >= min) {
+                return v;
+            }
             System.out.println("Value must be >= " + min);
         }
     }
@@ -285,19 +305,24 @@ public class Main {
         while (true) {
             System.out.print(msg);
             String s = sc.nextLine();
-            if (s != null && !s.trim().isEmpty()) return s.trim();
+            if (s != null && !s.trim().isEmpty()) {
+                return s.trim();
+            }
             System.out.println("Value cannot be empty.");
         }
     }
+
     private static String getUniqueTcode(TrainBST trains, String prompt) {
         while (true) {
             String tcode = getNonEmpty(prompt);
             try {
                 Object existed = trains.search(tcode); // có thể là Train hoặc Node tùy cài đặt
-                if (existed == null) return tcode;
+                if (existed == null) {
+                    return tcode;
+                }
                 System.out.println("tcode '" + tcode + "' already exists. Please re-enter.");
             } catch (NoSuchMethodError err) {
-               
+
                 return tcode; // vẫn trả về, insert sẽ bắt trùng phía sau
             } catch (Exception e) {
                 System.out.println("Cannot verify tcode: " + e.getMessage() + " → please re-enter.");
