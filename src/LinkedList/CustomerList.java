@@ -294,73 +294,106 @@ public class CustomerList extends MyLinkedList<Customer> {
         }
     }
 
-    // ====== 6. Thêm khách hàng mới (bắt lỗi nhập lại từng bước) ======
-    public void addCustomer() {
-        Scanner sc = new Scanner(System.in);
-        System.out.println("\n--- Add New Customer ---");
-        String code;
-        while (true) {
-            System.out.print("Enter customer code: ");
-            code = sc.nextLine().trim();
-            if (code.isEmpty()) {
-                System.out.println("⚠ Code cannot be empty!");
-                continue;
-            }
-            boolean exists = false;
-            Node<Customer> temp = head;
-            while (temp != null) {
-                if (temp.info.ccode.equalsIgnoreCase(code)) {
-                    exists = true;
-                    break;
-                }
-                temp = temp.next;
-            }
-            if (exists) {
-                System.out.println("⚠ Customer with code " + code + " already exists! Please enter again.");
-            } else {
+   // ====== 6. Thêm khách hàng mới (bắt lỗi nhập lại từng bước) ======
+public void addCustomer() {
+    Scanner sc = new Scanner(System.in);
+    System.out.println("\n--- Add New Customer ---");
+
+    // ====== Nhập mã khách hàng ======
+    String code;
+    while (true) {
+        System.out.print("Enter customer code: ");
+        code = sc.nextLine().trim();
+
+        if (code.isEmpty()) {
+            System.out.println("⚠ Code cannot be empty!");
+            continue;
+        }
+
+        // Kiểm tra không được là số âm (nếu nhập toàn số)
+        if (code.matches("-\\d+")) {
+            System.out.println("⚠ Code cannot be negative!");
+            continue;
+        }
+
+        // Kiểm tra trùng mã
+        boolean exists = false;
+        Node<Customer> temp = head;
+        while (temp != null) {
+            if (temp.info.ccode.equalsIgnoreCase(code)) {
+                exists = true;
                 break;
             }
+            temp = temp.next;
         }
-        String name;
-        while (true) {
-            System.out.print("Enter customer name: ");
-            name = sc.nextLine().trim();
-            if (name.isEmpty()) {
-                System.out.println("⚠ Name cannot be empty!");
-            } else {
-                break;
-            }
+        if (exists) {
+            System.out.println("⚠ Customer with code " + code + " already exists! Please enter again.");
+        } else {
+            break;
         }
-        String phone;
-        while (true) {
-            System.out.print("Enter phone number: ");
-            phone = sc.nextLine().trim();
-            if (phone.isEmpty() || !phone.matches("\\d+")) {
-                System.out.println("⚠ Invalid phone number! Must contain digits only.");
-                continue;
-            }
-            boolean duplicatePhone = false;
-            Node<Customer> p = head;
-            while (p != null) {
-                if (p.info.phone.equals(phone)) {
-                    duplicatePhone = true;
-                    System.out.println("⚠ Phone number already used by another customer!");
-                    break;
-                }
-                p = p.next;
-            }
-            if (!duplicatePhone) {
-                break;
-            }
-        }
-        Customer newCustomer = new Customer(code, name, phone);
-        addToTail(newCustomer);
-        saveToFile("customer.txt");
-        System.out.println("✅ Customer added successfully!");
     }
 
+    // ====== Nhập tên khách hàng ======
+    String name;
+    while (true) {
+        System.out.print("Enter customer name: ");
+        name = sc.nextLine().trim();
+        if (name.isEmpty()) {
+            System.out.println("⚠ Name cannot be empty!");
+        } else {
+            break;
+        }
+    }
+
+    // ====== Nhập số điện thoại ======
+    String phone;
+    while (true) {
+        System.out.print("Enter phone number: ");
+        phone = sc.nextLine().trim();
+
+        // Không để trống, chỉ chứa số, không âm
+        if (phone.isEmpty()) {
+            System.out.println("⚠ Phone number cannot be empty!");
+            continue;
+        }
+        if (!phone.matches("\\d+")) {
+            System.out.println("⚠ Invalid phone number! Must contain digits only (no signs or letters).");
+            continue;
+        }
+        if (phone.startsWith("0") && phone.length() == 1) {
+            System.out.println("⚠ Phone number is too short!");
+            continue;
+        }
+        if (phone.startsWith("-")) {
+            System.out.println("⚠ Phone number cannot be negative!");
+            continue;
+        }
+
+        // Kiểm tra trùng số điện thoại
+        boolean duplicatePhone = false;
+        Node<Customer> p = head;
+        while (p != null) {
+            if (p.info.phone.equals(phone)) {
+                duplicatePhone = true;
+                System.out.println("⚠ Phone number already used by another customer!");
+                break;
+            }
+            p = p.next;
+        }
+        if (!duplicatePhone) {
+            break;
+        }
+    }
+
+    // ====== Tạo và thêm khách hàng ======
+    Customer newCustomer = new Customer(code, name, phone);
+    addToTail(newCustomer);
+    saveToFile("customer.txt");
+    System.out.println("✅ Customer added successfully!");
+}
+
     // ====== 7. Kiểm tra danh sách rỗng ======
-    boolean isEmpty() {
+    public boolean isEmpty() {
         return head == null; // true nếu head = null, tức danh sách rỗng
     }
     // ====== 8. Sắp xếp danh sách khách hàng theo ccode tăng dần ======
@@ -424,25 +457,104 @@ public class CustomerList extends MyLinkedList<Customer> {
         return null;
     }
 
-    // ================== 10. CẬP NHẬT THÔNG TIN KHÁCH HÀNG ==================
-    public void updateCustomer() {
-        Scanner sc = new Scanner(System.in);
+   // ================== 10. CẬP NHẬT THÔNG TIN KHÁCH HÀNG ==================
+public void updateCustomer() {
+    Scanner sc = new Scanner(System.in);
+    System.out.println("\n--- UPDATE CUSTOMER INFORMATION ---");
+
+    // 1) Nhập mã khách hàng cần cập nhật (bắt nhập lại nếu để trống)
+    String code;
+    while (true) {
         System.out.print("Enter customer code to update: ");
-        String code = sc.nextLine().trim();
-
-        Customer c = findByCcode(code);
-        if (c == null) return; // Không tồn tại khách hàng
-
-        // Nhập lại thông tin mới (có thể bỏ trống để giữ nguyên)
-        System.out.print("Enter new name (leave blank to keep): ");
-        String newName = sc.nextLine().trim();
-        if (!newName.isEmpty()) c.cusName = newName;
-
-        System.out.print("Enter new phone (leave blank to keep): ");
-        String newPhone = sc.nextLine().trim();
-        if (!newPhone.isEmpty() && newPhone.matches("\\d+")) c.phone = newPhone;
-
-        saveToFile("customer.txt");
-        System.out.println("✅ Customer updated successfully!");
+        code = sc.nextLine().trim();
+        if (code.isEmpty()) {
+            System.out.println("⚠ Customer code cannot be empty. Please enter again.");
+            continue;
+        }
+        break;
     }
+
+    // 2) Tìm customer theo mã (sử dụng hàm findByCcode hoặc searchByCodeOnly)
+    Customer c = findByCcode(code); // nếu bạn đã đổi tên hàm, thay bằng hàm tìm phù hợp
+    if (c == null) {
+        // findByCcode in ra thông báo không tìm thấy rồi trả về null, nên chỉ return
+        return;
+    }
+
+    // 3) Nhập tên mới (có thể để trống để giữ nguyên). Nếu nhập sai (chỉ toàn khoảng trắng) -> bắt nhập lại
+    String newName;
+    while (true) {
+        System.out.print("Enter new name (press Enter to keep current '" + c.cusName + "'): ");
+        newName = sc.nextLine();
+        // Nếu người dùng chỉ nhập khoảng trắng -> coi là invalid, yêu cầu nhập lại
+        if (newName != null) newName = newName.trim();
+        if (newName == null) newName = "";
+
+        if (newName.isEmpty()) {
+            // Giữ nguyên tên cũ
+            newName = c.cusName;
+            break;
+        }
+        // Nếu nhập tên không rỗng -> chấp nhận (có thể thêm kiểm tra khác nếu cần)
+        if (newName.length() == 0) {
+            System.out.println("⚠ Name cannot be blank. Please enter again.");
+            continue;
+        }
+        break;
+    }
+
+    // 4) Nhập phone mới (có thể để trống để giữ nguyên).
+    //    Nếu nhập không rỗng: phải là chữ số (\\d+), không trùng với số của khách khác.
+    String newPhone;
+    while (true) {
+        System.out.print("Enter new phone (press Enter to keep current '" + c.phone + "'): ");
+        newPhone = sc.nextLine();
+        if (newPhone != null) newPhone = newPhone.trim();
+        if (newPhone == null) newPhone = "";
+
+        if (newPhone.isEmpty()) {
+            // Giữ nguyên phone cũ
+            newPhone = c.phone;
+            break;
+        }
+
+        // Kiểm tra chỉ chứa chữ số
+        if (!newPhone.matches("\\d+")) {
+            System.out.println("⚠ Invalid phone number! Must contain digits only. Please enter again.");
+            continue;
+        }
+
+        // Kiểm tra không phải số âm (chỉ phòng trường hợp có dấu)
+        if (newPhone.startsWith("-")) {
+            System.out.println("⚠ Phone number cannot be negative. Please enter again.");
+            continue;
+        }
+
+        // Kiểm tra trùng số điện thoại với các customer khác (không tính chính khách hàng hiện tại)
+        boolean duplicate = false;
+        Node<Customer> p = head;
+        while (p != null) {
+            if (p.info != c && p.info.phone.equals(newPhone)) {
+                duplicate = true;
+                break;
+            }
+            p = p.next;
+        }
+        if (duplicate) {
+            System.out.println("⚠ Phone number already used by another customer. Please enter a different phone.");
+            continue;
+        }
+
+        // Nếu qua hết kiểm tra -> chấp nhận
+        break;
+    }
+
+    // 5) Gán lại thông tin và lưu file
+    c.cusName = newName;
+    c.phone = newPhone;
+
+    saveToFile("customer.txt"); // lưu danh sách sau khi cập nhật
+    System.out.println("✅ Customer updated successfully!");
+}
+
 }
