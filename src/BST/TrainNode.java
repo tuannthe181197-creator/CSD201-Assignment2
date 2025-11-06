@@ -4,8 +4,8 @@
  */
 package BST;
 
-class TrainNode {
-    Train info;
+public class TrainNode {
+    public Train info;
     TrainNode left, right;
     TrainNode(Train x) { info = x; }
 }
