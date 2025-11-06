@@ -69,8 +69,6 @@ package LinkedList;
  *      - Cho phép giữ nguyên giá trị cũ nếu người dùng không nhập mới
  *      - Sau khi cập nhật, tự động ghi lại file
  */
-
-
 import java.io.*;
 import java.util.Scanner;
 
@@ -79,43 +77,38 @@ public class CustomerList extends MyLinkedList<Customer> {
 
     // ====== 1. Load dữ liệu từ file ======
     public void loadFromFile(String fname) {
-        head = null;  // reset danh sách
+        head = null;
         tail = null;
         try (BufferedReader br = new BufferedReader(new FileReader(fname))) {
-            // Mở file fname bằng BufferedReader để đọc dữ liệu
-            String line = br.readLine();
+            String line;
             while ((line = br.readLine()) != null) {
-                // Đọc từng dòng trong file
                 String[] parts = line.split("\\|");
-                // Tách dữ liệu theo ký tự "|" thành 3 phần: code, name, phone
                 if (parts.length == 3) {
-                    String code = parts[0].trim();   // Loại bỏ khoảng trắng
+                    String code = parts[0].trim();
                     String name = parts[1].trim();
                     String phone = parts[2].trim();
-
                     addToTail(new Customer(code, name, phone));
-                    // Thêm khách hàng hợp lệ vào cuối danh sách
                 }
             }
-            System.out.println(" Customer list loaded successfully from " + fname);
+            System.out.println("✅ Customer list loaded successfully from " + fname);
         } catch (IOException e) {
-            System.out.println(" Error loading customers: " + e.getMessage());
+            System.out.println("❌ Error loading customers: " + e.getMessage());
         }
     }
 
     // ====== 2. Save list xuống file ======
     public void saveToFile(String fname) {
         try (PrintWriter pw = new PrintWriter(new FileWriter(fname))) {
+
             Node<Customer> p = head;
             while (p != null) {
-                // Duyệt từng nút trong danh sách liên kết
                 pw.println(p.info.ccode + " | " + p.info.cusName + " | " + p.info.phone);
-                // Ghi thông tin khách hàng ra file theo định dạng bảng
                 p = p.next;
             }
-            System.out.println(" Saved to file: " + fname);
+            System.out.println("💾 Saved to file: " + fname);
+
         } catch (IOException e) {
-            System.out.println(" Error saving customers: " + e.getMessage());
+            System.out.println("❌ Error saving customers: " + e.getMessage());
         }
     }
 
@@ -285,7 +278,7 @@ public class CustomerList extends MyLinkedList<Customer> {
         }
 //    // In tiêu đề bảng
         System.out.println(String.format("%-5s | %-15s | %-10s", "Code", "Name", "Phone"));
-        System.out.println("-------------------------------------------");
+//        System.out.println("-------------------------------------------");
 
         Node<Customer> p = head;
         while (p != null) {
@@ -360,7 +353,7 @@ public class CustomerList extends MyLinkedList<Customer> {
     }
 
     // ====== 7. Kiểm tra danh sách rỗng ======
-    boolean isEmpty() {
+    public boolean isEmpty() {
         return head == null; // true nếu head = null, tức danh sách rỗng
     }
     // ====== 8. Sắp xếp danh sách khách hàng theo ccode tăng dần ======
@@ -409,7 +402,6 @@ public class CustomerList extends MyLinkedList<Customer> {
         System.out.println(" Customer list sorted by code successfully!");
     }
 
-   
 // ================== 9. TÌM KHÁCH HÀNG THEO MÃ ==================
     public Customer findByCcode(String code) {
         Node<Customer> p = head;
@@ -431,16 +423,21 @@ public class CustomerList extends MyLinkedList<Customer> {
         String code = sc.nextLine().trim();
 
         Customer c = findByCcode(code);
-        if (c == null) return; // Không tồn tại khách hàng
-
+        if (c == null) {
+            return; // Không tồn tại khách hàng
+        }
         // Nhập lại thông tin mới (có thể bỏ trống để giữ nguyên)
         System.out.print("Enter new name (leave blank to keep): ");
         String newName = sc.nextLine().trim();
-        if (!newName.isEmpty()) c.cusName = newName;
+        if (!newName.isEmpty()) {
+            c.cusName = newName;
+        }
 
         System.out.print("Enter new phone (leave blank to keep): ");
         String newPhone = sc.nextLine().trim();
-        if (!newPhone.isEmpty() && newPhone.matches("\\d+")) c.phone = newPhone;
+        if (!newPhone.isEmpty() && newPhone.matches("\\d+")) {
+            c.phone = newPhone;
+        }
 
         saveToFile("customer.txt");
         System.out.println("✅ Customer updated successfully!");

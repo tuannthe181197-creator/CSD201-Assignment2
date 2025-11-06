@@ -162,30 +162,50 @@ public class Main {
                     customers.addCustomer();
                     break;
                 case 3:
-                    customers.display();
+                    if (customers.isEmpty()) {
+                        System.out.println("⚠ Customer list is empty.");
+                    } else {
+                        customers.display();
+                    }
                     break;
                 case 4:
                     customers.saveToFile("customer.txt");
                     break;
                 case 5:
-                    System.out.print("Enter ccode: ");
-                    customers.findByCcode(sc.nextLine());
+                    if (customers.isEmpty()) {
+                        System.out.println("⚠ Customer list is empty. Cannot search.");
+                    } else {
+                        System.out.print("Enter ccode: ");
+                        customers.findByCcode(sc.nextLine());
+                    }
                     break;
                 case 6:
-                    System.out.print("Enter ccode: ");
-                    customers.deleteByCcode(sc.nextLine());
+                    if (customers.isEmpty()) {
+                        System.out.println("⚠ Customer list is empty. Nothing to delete.");
+                    } else {
+                        System.out.print("Enter ccode: ");
+                        customers.deleteByCcode(sc.nextLine());
+                    }
                     break;
                 case 7:
-                    customers.sortCustomer();
+                    if (customers.isEmpty()) {
+                        System.out.println("⚠ Customer list is empty. Cannot sort.");
+                    } else {
+                        customers.sortCustomer();
+                    }
                     break;
                 case 8:
-                    customers.updateCustomer();
+                    if (customers.isEmpty()) {
+                        System.out.println("⚠ Customer list is empty. Nothing to update.");
+                    } else {
+                        customers.updateCustomer();
+                    }
                     break;
                 case 9:
                     System.out.println("Return to Main Menu...");
                     break;
                 default:
-                    System.out.println("Invalid!");
+                    System.out.println("⚠ Invalid choice! Please try again.");
             }
 
         } while (c != 9);
