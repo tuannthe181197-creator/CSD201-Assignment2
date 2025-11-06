@@ -210,6 +210,61 @@ public class Main {
 
     } while (c != 9);
 
+            switch (c) {
+                case 1:
+                    customers.loadFromFile("customer.txt");
+                    break;
+                case 2:
+                    customers.addCustomer();
+                    break;
+                case 3:
+                    if (customers.isEmpty()) {
+                        System.out.println("⚠ Customer list is empty.");
+                    } else {
+                        customers.display();
+                    }
+                    break;
+                case 4:
+                    customers.saveToFile("customer.txt");
+                    break;
+                case 5:
+                    if (customers.isEmpty()) {
+                        System.out.println("⚠ Customer list is empty. Cannot search.");
+                    } else {
+                        System.out.print("Enter ccode: ");
+                        customers.findByCcode(sc.nextLine());
+                    }
+                    break;
+                case 6:
+                    if (customers.isEmpty()) {
+                        System.out.println("⚠ Customer list is empty. Nothing to delete.");
+                    } else {
+                        System.out.print("Enter ccode: ");
+                        customers.deleteByCcode(sc.nextLine());
+                    }
+                    break;
+                case 7:
+                    if (customers.isEmpty()) {
+                        System.out.println("⚠ Customer list is empty. Cannot sort.");
+                    } else {
+                        customers.sortCustomer();
+                    }
+                    break;
+                case 8:
+                    if (customers.isEmpty()) {
+                        System.out.println("⚠ Customer list is empty. Nothing to update.");
+                    } else {
+                        customers.updateCustomer();
+                    }
+                    break;
+                case 9:
+                    System.out.println("Return to Main Menu...");
+                    break;
+                default:
+                    System.out.println("⚠ Invalid choice! Please try again.");
+            }
+
+
     }
 
     //================ BOOKING MODULE ================
