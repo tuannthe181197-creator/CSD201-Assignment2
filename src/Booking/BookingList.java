@@ -8,30 +8,96 @@ package Booking;
  *
  * @author Dell
  */
+import BST.TrainBST;
+import BST.TrainNode;
+import BST.Train;
+import LinkedList.CustomerList;
+import LinkedList.Customer;
+
 import java.util.*;
 
 public class BookingList {
 
     LinkedList<Booking> list = new LinkedList<>();
 
-    // 3.1 Input data
-    public void inputBooking() {
-        Scanner sc = new Scanner(System.in);
-        System.out.print("Enter train code (tcode): ");
-        String tcode = sc.nextLine();
-        System.out.print("Enter customer code (ccode): ");
-        String ccode = sc.nextLine();
-        System.out.print("Enter number of seats: ");
-        int seat = Integer.parseInt(sc.nextLine());
+    public boolean loadTrainData(TrainBST trains, String file) {
+        int n = trains.loadFromFile(file);
+        return n > 0;
+    }
 
+    public boolean loadCustomerData(CustomerList customers, String file) {
+        customers.loadFromFile(file);
+        return !customers.isEmpty();
+    }
+
+    // 3.1 Input data
+    public void inputBooking(TrainBST trains, CustomerList customers) {
+        Scanner sc = new Scanner(System.in);
+
+        // nhập tcode
+        String tcode;
+        while (true) {
+            System.out.print("Enter train code (tcode): ");
+            tcode = sc.nextLine().trim();
+            TrainNode node = trains.search(tcode);
+            if (node == null) {
+                System.out.println(" Train not found!");
+            } else {
+                break;
+            }
+        }
+
+        // nhập ccode
+        String ccode;
+        while (true) {
+            System.out.print("Enter customer code (ccode): ");
+            ccode = sc.nextLine().trim();
+            Customer c = customers.findByCcode(ccode);
+            if (c == null) {
+                System.out.println(" Customer not found!");
+            } else {
+                break;
+            }
+        }
+
+        // nhập số ghế
+        int seat;
+        while (true) {
+            System.out.print("Enter number of seats: ");
+            try {
+                seat = Integer.parseInt(sc.nextLine().trim());
+            } catch (NumberFormatException e) {
+                System.out.println(" Must be a number!");
+                continue;
+            }
+            if (seat <= 0) {
+                System.out.println(" Seat must be > 0!");
+                continue;
+            }
+
+            TrainNode tnode = trains.search(tcode);
+            int available = tnode.info.available();
+            if (seat > available) {
+                System.out.println(" Not enough seats! Available: " + available);
+                continue;
+            }
+            break;
+        }
+
+        // OK → add Booking
         list.add(new Booking(tcode, ccode, seat));
-        System.out.println("✅ Booking added successfully!\n");
+
+        // update booked trên train
+        Train train = trains.search(tcode).info;
+        train.setBooked(train.getBooked() + seat);
+
+        System.out.println(" Booking added successfully!\n");
     }
 
     // 3.2 Display booking data
     public void displayBookings() {
         if (list.isEmpty()) {
-            System.out.println("⚠️ No booking data available.");
+            System.out.println(" No booking data available.");
             return;
         }
 
@@ -56,6 +122,6 @@ public class BookingList {
                 return b1.ccode.compareToIgnoreCase(b2.ccode);
             }
         });
-        System.out.println("✅ Sorted booking list by tcode + ccode.\n");
+        System.out.println(" Sorted booking list by tcode + ccode.\n");
     }
 }

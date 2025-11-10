@@ -35,7 +35,7 @@ public class Main {
                     customerMenu(customerList);
                     break;
                 case 3:
-                    bookingMenu(bookingList);
+                    bookingMenu(bookingList, trainBST, customerList);
                     break;
                 case 4:
                     System.out.println("Exit program...");
@@ -180,7 +180,7 @@ public class Main {
                     break;
                 case 3:
                     if (customers.isEmpty()) {
-                        System.out.println("⚠ Customer list is empty.");
+                        System.out.println(" Customer list is empty.");
                     } else {
                         customers.display();
                     }
@@ -190,7 +190,7 @@ public class Main {
                     break;
                 case 5:
                     if (customers.isEmpty()) {
-                        System.out.println("⚠ Customer list is empty. Cannot search.");
+                        System.out.println(" Customer list is empty. Cannot search.");
                     } else {
                         System.out.print("Enter ccode: ");
                         customers.findByCcode(sc.nextLine());
@@ -198,7 +198,7 @@ public class Main {
                     break;
                 case 6:
                     if (customers.isEmpty()) {
-                        System.out.println("⚠ Customer list is empty. Nothing to delete.");
+                        System.out.println(" Customer list is empty. Nothing to delete.");
                     } else {
                         System.out.print("Enter ccode: ");
                         customers.deleteByCcode(sc.nextLine());
@@ -206,14 +206,14 @@ public class Main {
                     break;
                 case 7:
                     if (customers.isEmpty()) {
-                        System.out.println("⚠ Customer list is empty. Cannot sort.");
+                        System.out.println(" Customer list is empty. Cannot sort.");
                     } else {
                         customers.sortCustomer();
                     }
                     break;
                 case 8:
                     if (customers.isEmpty()) {
-                        System.out.println("⚠ Customer list is empty. Nothing to update.");
+                        System.out.println(" Customer list is empty. Nothing to update.");
                     } else {
                         customers.updateCustomer();
                     }
@@ -222,7 +222,7 @@ public class Main {
                     System.out.println("Return to Main Menu...");
                     break;
                 default:
-                    System.out.println("⚠ Invalid choice! Please try again.");
+                    System.out.println(" Invalid choice! Please try again.");
             }
 
         } while (c != 9);
@@ -236,7 +236,7 @@ public class Main {
                 break;
             case 3:
                 if (customers.isEmpty()) {
-                    System.out.println("⚠ Customer list is empty.");
+                    System.out.println(" Customer list is empty.");
                 } else {
                     customers.display();
                 }
@@ -246,7 +246,7 @@ public class Main {
                 break;
             case 5:
                 if (customers.isEmpty()) {
-                    System.out.println("⚠ Customer list is empty. Cannot search.");
+                    System.out.println(" Customer list is empty. Cannot search.");
                 } else {
                     System.out.print("Enter ccode: ");
                     customers.findByCcode(sc.nextLine());
@@ -254,7 +254,7 @@ public class Main {
                 break;
             case 6:
                 if (customers.isEmpty()) {
-                    System.out.println("⚠ Customer list is empty. Nothing to delete.");
+                    System.out.println(" Customer list is empty. Nothing to delete.");
                 } else {
                     System.out.print("Enter ccode: ");
                     customers.deleteByCcode(sc.nextLine());
@@ -262,14 +262,14 @@ public class Main {
                 break;
             case 7:
                 if (customers.isEmpty()) {
-                    System.out.println("⚠ Customer list is empty. Cannot sort.");
+                    System.out.println(" Customer list is empty. Cannot sort.");
                 } else {
                     customers.sortCustomer();
                 }
                 break;
             case 8:
                 if (customers.isEmpty()) {
-                    System.out.println("⚠ Customer list is empty. Nothing to update.");
+                    System.out.println(" Customer list is empty. Nothing to update.");
                 } else {
                     customers.updateCustomer();
                 }
@@ -278,36 +278,53 @@ public class Main {
                 System.out.println("Return to Main Menu...");
                 break;
             default:
-                System.out.println("⚠ Invalid choice! Please try again.");
+                System.out.println(" Invalid choice! Please try again.");
         }
 
     }
 
     //================ BOOKING MODULE ================
-    private static void bookingMenu(BookingList bookings) {
+    private static void bookingMenu(BookingList bookings, TrainBST trains, CustomerList customers) {
         int c;
         do {
             System.out.println("\n--- BOOKING MENU ---");
-            System.out.println("1. Input booking");
-            System.out.println("2. Display bookings");
-            System.out.println("3. Sort by tcode + ccode");
-            System.out.println("4. Back to main");
+            System.out.println("1. Load train data");
+            System.out.println("2. Load customer data");
+            System.out.println("3. Input booking");
+            System.out.println("4. Display bookings");
+            System.out.println("5. Sort booking");
+            System.out.println("6. Back");
             System.out.print("Your choice: ");
             c = getInt();
 
             switch (c) {
                 case 1:
-                    bookings.inputBooking();
+                    bookings.loadTrainData(trains, "trains.txt");
                     break;
                 case 2:
-                    bookings.displayBookings();
+                    bookings.loadCustomerData(customers, "customer.txt");
                     break;
                 case 3:
+                    // validate phải load trước
+                    if (trains.isEmpty()) {
+                        System.out.println(" Train data not loaded!");
+                        break;
+                    }
+                    if (customers.isEmpty()) {
+                        System.out.println(" Customer data not loaded!");
+                        break;
+                    }
+                    bookings.inputBooking(trains, customers);
+                    break;
+                case 4:
+                    bookings.displayBookings();
+                    break;
+                case 5:
                     bookings.sortByTcodeAndCcode();
                     break;
             }
 
-        } while (c != 4);
+        } while (c != 6);
     }
 
     //============= UTILITY ============
