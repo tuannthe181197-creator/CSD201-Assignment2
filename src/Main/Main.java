@@ -6,6 +6,43 @@ import BST.Train;
 import LinkedList.CustomerList;
 import Booking.BookingList;
 import BST.TrainNode;
+/**
+ * Lớp chính của chương trình Quản lý Đặt vé Tàu (Train Booking System).
+ * 
+ * <p>Chương trình cho phép người dùng quản lý ba hệ thống chính:
+ * <ul>
+ *     <li>{@link BST.TrainBST} - Cây nhị phân tìm kiếm (BST) dùng để quản lý danh sách tàu.</li>
+ *     <li>{@link LinkedList.CustomerList} - Danh sách liên kết dùng để quản lý khách hàng.</li>
+ *     <li>{@link Booking.BookingList} - Danh sách quản lý các đặt vé giữa tàu và khách hàng.</li>
+ * </ul>
+ * 
+ * <p>Các chức năng chính bao gồm:
+ * <ul>
+ *     <li>Quản lý tàu: tải, thêm, tìm kiếm, xóa, cân bằng cây, đếm số lượng...</li>
+ *     <li>Quản lý khách hàng: tải, thêm, tìm kiếm, xóa, sắp xếp, cập nhật, lưu file...</li>
+ *     <li>Quản lý đặt vé: thêm vé mới, hiển thị, sắp xếp, tải dữ liệu liên quan.</li>
+ * </ul>
+ * 
+ * <p>Chương trình chạy trên môi trường console (giao diện văn bản).</p>
+ * 
+ *  // ========================= MODULE TÀU =========================
+ * Hiển thị và xử lý menu quản lý tàu.
+     * 
+     * @param trains đối tượng {@link TrainBST} quản lý dữ liệu tàu
+     * 
+ * // ========================= MODULE KHÁCH HÀNG =========================
+ * Hiển thị và xử lý menu quản lý khách hàng.
+     * 
+     * @param customers đối tượng {@link CustomerList} quản lý danh sách khách hàng
+ *     // ========================= MODULE ĐẶT VÉ =========================
+    * Hiển thị và xử lý menu quản lý đặt vé.
+     * 
+     * @param bookings  danh sách đặt vé {@link BookingList}
+     * @param trains    cây nhị phân tàu {@link TrainBST}
+     * @param customers danh sách khách hàng {@link CustomerList}
+ * @author 
+ * @version 1.0
+ */
 
 public class Main {
 
@@ -293,7 +330,7 @@ public class Main {
             System.out.println("3. Input booking");
             System.out.println("4. Display bookings");
             System.out.println("5. Sort booking");
-            System.out.println("6. Back");
+            System.out.println("6. Back to main");
             System.out.print("Your choice: ");
             c = getInt();
 
@@ -328,6 +365,12 @@ public class Main {
     }
 
     //============= UTILITY ============
+    // ========================= HÀM HỖ TRỢ =========================
+
+    /** 
+     * Đọc một số nguyên từ bàn phím, lặp lại đến khi hợp lệ.  
+     * @return giá trị số nguyên do người dùng nhập
+     */
     private static int getInt() {
         while (true) {
             try {
@@ -338,6 +381,12 @@ public class Main {
         }
     }
 
+     /** 
+     * Đọc số nguyên có giá trị tối thiểu.
+     * @param msg thông báo hiển thị
+     * @param min giá trị nhỏ nhất cho phép
+     * @return số nguyên hợp lệ
+     */
     private static int getIntWithMin(String msg, int min) {
         while (true) {
             System.out.print(msg);
@@ -349,6 +398,14 @@ public class Main {
         }
     }
 
+    
+    /** 
+     * Đọc số nguyên trong khoảng cho phép.
+     * @param msg thông báo hiển thị
+     * @param min giá trị nhỏ nhất
+     * @param max giá trị lớn nhất
+     * @return số nguyên hợp lệ
+     */
     private static int getIntRange(String msg, int min, int max) {
         while (true) {
             System.out.print(msg);
@@ -361,6 +418,10 @@ public class Main {
         }
     }
 
+     /** 
+     * Đọc số thực từ người dùng.
+     * @return giá trị double hợp lệ
+     */
     private static double getDouble() {
         while (true) {
             try {
@@ -371,7 +432,13 @@ public class Main {
             }
         }
     }
-
+    
+/** 
+     * Đọc số thực ≥ giá trị tối thiểu.
+     * @param msg thông báo hiển thị
+     * @param min giá trị nhỏ nhất
+     * @return số double hợp lệ
+     */
     private static double getDoubleMin(String msg, double min) {
         while (true) {
             System.out.print(msg);
@@ -383,6 +450,11 @@ public class Main {
         }
     }
 
+     /** 
+     * Đọc chuỗi không rỗng.
+     * @param msg thông báo hiển thị
+     * @return chuỗi không rỗng, đã loại bỏ khoảng trắng thừa
+     */
     private static String getNonEmpty(String msg) {
         while (true) {
             System.out.print(msg);
@@ -394,6 +466,12 @@ public class Main {
         }
     }
 
+    /** 
+     * Nhập mã tàu (tcode) duy nhất chưa tồn tại trong cây.
+     * @param trains cây tàu để kiểm tra trùng lặp
+     * @param prompt thông báo nhập liệu
+     * @return mã tàu hợp lệ và duy nhất
+     */
     private static String getUniqueTcode(TrainBST trains, String prompt) {
         while (true) {
             String tcode = getNonEmpty(prompt);
