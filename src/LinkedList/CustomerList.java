@@ -338,46 +338,50 @@ public void addCustomer() {
         }
     }
 
-    // ====== Nhập số điện thoại ======
     String phone;
-    while (true) {
-        System.out.print("Enter phone number: ");
-        phone = sc.nextLine().trim();
+while (true) {
+    System.out.print("Enter phone number: ");
+    phone = sc.nextLine().trim();
 
-        // Không để trống, chỉ chứa số, không âm
-        if (phone.isEmpty()) {
-            System.out.println("⚠ Phone number cannot be empty!");
-            continue;
-        }
-        if (!phone.matches("\\d+")) {
-            System.out.println("⚠ Invalid phone number! Must contain digits only (no signs or letters).");
-            continue;
-        }
-        if (phone.startsWith("0") && phone.length() == 1) {
-            System.out.println("⚠ Phone number is too short!");
-            continue;
-        }
-        if (phone.startsWith("-")) {
-            System.out.println("⚠ Phone number cannot be negative!");
-            continue;
-        }
-
-        // Kiểm tra trùng số điện thoại
-        boolean duplicatePhone = false;
-        Node<Customer> p = head;
-        while (p != null) {
-            if (p.info.phone.equals(phone)) {
-                duplicatePhone = true;
-                System.out.println("⚠ Phone number already used by another customer!");
-                break;
-            }
-            p = p.next;
-        }
-        if (!duplicatePhone) {
-            break;
-        }
+    // ⚠ Không để trống
+    if (phone.isEmpty()) {
+        System.out.println("⚠ Phone number cannot be empty!");
+        continue;
     }
 
+    // ⚠ Chỉ được chứa chữ số (0–9)
+    if (!phone.matches("\\d+")) {
+        System.out.println("⚠ Invalid phone number! Must contain digits only (no signs or letters).");
+        continue;
+    }
+
+    // ⚠ Phải bắt đầu bằng số 0
+    if (!phone.startsWith("0")) {
+        System.out.println("⚠ Phone number must start with 0!");
+        continue;
+    }
+
+    // ⚠ Độ dài hợp lệ: 10 hoặc 11 chữ số
+    if (phone.length() < 10 || phone.length() > 11) {
+        System.out.println("⚠ Phone number must be 10 or 11 digits!");
+        continue;
+    }
+
+    // ⚠ Kiểm tra trùng số điện thoại
+    boolean duplicatePhone = false;
+    Node<Customer> p = head;
+    while (p != null) {
+        if (p.info.phone.equals(phone)) {
+            duplicatePhone = true;
+            System.out.println("⚠ Phone number already used by another customer!");
+            break;
+        }
+        p = p.next;
+    }
+    if (!duplicatePhone) {
+        break; // hợp lệ → thoát vòng lặp
+    }
+}
     // ====== Tạo và thêm khách hàng ======
     Customer newCustomer = new Customer(code, name, phone);
     addToTail(newCustomer);
