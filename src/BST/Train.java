@@ -1,5 +1,50 @@
 package BST;
+/*
+=====================================================================
+                          CLASS INFORMATION
+=====================================================================
 
+Class name: Train
+Author: Phạm Phúc Thiện – HE190564
+Subject: CSD201 – Data Structures and Algorithms
+Project: Train Booking System (Assignment 1)
+
+---------------------------------------------------------------------
+Purpose:
+- Đại diện cho một chuyến tàu (Train record) trong hệ thống.
+- Lưu trữ các thuộc tính: tcode, name, seat, booked, departTime, departPlace.
+- Cung cấp kiểm tra ràng buộc dữ liệu (validate) để đảm bảo hợp lệ.
+- Hỗ trợ parse từ 1 dòng dữ liệu định dạng pipe (tcode|name|seat|booked|depart_time|place).
+- Hỗ trợ xuất ra 1 dòng dữ liệu để lưu file (toDataLine) và hiển thị (toString).
+
+---------------------------------------------------------------------
+Major Functionalities:
+1. parse(String line)
+   * Đọc 1 dòng văn bản theo định dạng: tcode|name|seat|booked|depart_time|place.
+   * Tách và chuyển kiểu dữ liệu; ném IllegalArgumentException khi sai định dạng.
+
+2. validate()
+   * Kiểm tra các ràng buộc nghiệp vụ:
+     - tcode/name/departPlace không rỗng
+     - seat > 0
+     - 0 <= booked <= seat
+     - departTime >= 0
+   * Ném IllegalArgumentException với thông báo rõ ràng khi vi phạm.
+
+3. toDataLine()
+   * Xuất đối tượng về chuỗi pipe “tcode|name|seat|booked|departTime|departPlace”
+     để phục vụ lưu file.
+
+4. toString()
+   * Trả về chuỗi format đẹp để in bảng trên console.
+
+5. available(), isFull()
+   * Tính số ghế còn lại (seat - booked) và kiểm tra tàu đã đầy hay chưa.
+
+6. Getter/Setter cần thiết
+   * Cung cấp các phương thức truy cập và cập nhật hợp lệ cho thuộc tính.
+=====================================================================
+*/
 public class Train {
     private String tcode;
     private String name;
