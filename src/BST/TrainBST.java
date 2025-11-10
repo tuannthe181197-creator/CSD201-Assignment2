@@ -1,5 +1,51 @@
 package BST;
+/*
+=====================================================================
+                          CLASS INFORMATION
+=====================================================================
 
+Class name: TrainBST
+Author: Phạm Phúc Thiện – HE190564
+Subject: CSD201 – Data Structures and Algorithms
+Project: Train Booking System (Assignment 1)
+
+---------------------------------------------------------------------
+Purpose:
+- Cài đặt Cây Nhị Phân Tìm Kiếm (BST) quản lý các Train.
+- Hỗ trợ thêm/xóa/tìm kiếm theo tcode, duyệt LNR & BFS, đếm nút.
+- Cân bằng cây đơn giản từ mảng đã sắp theo in-order.
+- Nạp dữ liệu từ file (parse từng dòng) và lưu theo thứ tự in-order.
+
+---------------------------------------------------------------------
+Major Functionalities:
+1) insert(Train x)
+   * Chèn theo tcode (duy nhất), trả false nếu null/invalid hoặc bị trùng.
+
+2) search(String tcode)
+   * Tìm nút theo tcode; trả về TrainNode hoặc null nếu không thấy.
+
+3) inorder() / private inorder(TrainNode)
+   * Duyệt LNR và in bảng.
+
+4) breadthFirst()
+   * Duyệt theo mức (queue) và in bảng.
+
+5) count() / private count(TrainNode)
+   * Đếm tổng số nút trong cây.
+
+6) deleteByTcode(String tcode)
+   * Xóa theo tcode (copying): thay thế bằng kế tiếp giữa inorder nếu có 2 con.
+
+7) balance()
+   * Đổ dữ liệu cây vào mảng theo in-order rồi build lại cây cân bằng.
+
+8) loadFromFile(String path)
+   * Đọc file UTF-8; parse từng dòng bằng Train.parse; thống kê Added/Duplicate/Invalid.
+
+9) saveInorderToFile(String path)
+   * Ghi toàn bộ cây theo thứ tự in-order ra file UTF-8, tự tạo thư mục nếu cần.
+=====================================================================
+*/
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
@@ -14,14 +60,14 @@ public class TrainBST {
     /** Insert theo tcode (duy nhất). Trả về false nếu trùng hoặc input null/invalid. */
     public boolean insert(Train x){
         if (x == null) return false;
-        x.validate(); // đảm bảo hợp lệ trước khi chèn (ném IllegalArgumentException nếu sai)
+        x.validate(); 
         if (root == null){ root = new TrainNode(x); return true; }
         TrainNode f = null, p = root;
         String key = x.getTcode();
         while(p != null){
             f = p;
             int cmp = key.compareToIgnoreCase(p.info.getTcode());
-            if (cmp == 0) return false; // duplicate
+            if (cmp == 0) return false; 
             p = (cmp < 0) ? p.left : p.right;
         }
         int cmp = key.compareToIgnoreCase(f.info.getTcode());
@@ -90,16 +136,14 @@ public class TrainBST {
             f = p;
             p = (cmp < 0) ? p.left : p.right;
         }
-        if (p == null) return false; // not found
-
-        // case: two children → tìm successor bên phải và copy info
+        if (p == null) return false; 
         if (p.left != null && p.right != null){
             TrainNode q = p.right; TrainNode fq = p;
             while (q.left != null){ fq = q; q = q.left; }
-            p.info = q.info; // copy info
-            p = q; f = fq;   // xóa q ở dưới
+            p.info = q.info; 
+            p = q; f = fq;  
         }
-        // p còn tối đa 1 con
+
         TrainNode child = (p.left != null) ? p.left : p.right;
         if (f == null) root = child;
         else if (f.left == p) f.left = child;
